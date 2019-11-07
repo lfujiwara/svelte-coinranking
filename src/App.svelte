@@ -1,20 +1,25 @@
 <script>
   import CoinDisplayer from "./CoinDisplayer.svelte";
+
+  let minutes = x => x * 60000;
+
   // Crypto Stats
   let stats = null;
-
+  async function getStatsData() {
   fetch("https://api.coinranking.com/v1/public/stats?base=USD")
     .then(res => res.json())
     .then(res => {
       stats = res.data;
       console.log(stats);
     });
+  }
+  const statsInterval = setInterval(getStatsData, 5);
 
   // Base coin & coins data
   let coins = null;
   let basecoin = null;
   let coinErr = false;
-
+  async function getCoinsData() {
   fetch("https://api.coinranking.com/v1/public/coins")
     .then(response => response.json())
     .then(res => {
@@ -25,6 +30,8 @@
       console.log(exc);
       coinErr = true;
     });
+  }
+  const coinsInterval = setInterval(getCoinsData, 5);
 </script>
 
 <style>
@@ -53,9 +60,6 @@
 
 <div class="main">
   <div class="title">Cryptowatcher</div>
-  <div class="stats">
-    {#each stats as stat}{/each}
-  </div>
   <div class="container">
     {#if coins != null}
       <div class="coins">
